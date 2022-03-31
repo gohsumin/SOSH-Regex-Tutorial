@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <style>
+        body {
+            font-size: 16px;
+            font-family: sans-serif;
+            margin: 0px;
+        }
+
+        .topdiv {
+            width: "100%";
+            padding: 30px;
+            background-color: #eee;
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #111,
+        }
+
+        .code {
+            font-family: monospace;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .contents {
+            font-size: 15px;
+            color: #222;
+        }
+
+        .section {
+            margin: 60px 40px 60px 30px;
+        }
+
+        .section-body {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section p {
+            margin-top: 25px;
+            line-height: 21px;
+            margin-bottom: 25px;
+            margin-left: 22px;
+        }
+
+        .title {
+            font-size: 17px;
+            font-weight: 400;
+            padding: 7px;
+            background-color: #dfd;
+            display: inline;
+        }
+
+        .section ul li {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+
+        .section ol li {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+
+        .section ul ul li {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topdiv">
+        <h1>
+            Writing Regular Expressions for Sosh Emails
+        </h1>
+
+        <div class="contents">
+            This document contains the following:
+            <ul>
+                <li><a href="#first">What are regular expressions</li></a>
+                <li><a href="#second">How we use regular expressions</li></a>
+                <li><a href="#third">Example with a purchase confirmation email</li></a>
+                <li><a href="#fourth">Get started</li></a>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="section">
+        <a id="first"><div class="title">What are regular expressions</div></a>
+        <div class="section-body">
+            <p>
+                A regular expression is a search pattern used to find a certain sequence of characters in a
+                string.<br><br>
+                It can take multiple forms:<br>
+            </p>
+            <ul>
+                <li>
+                    <div class="code">const exampleA = /&lt;div/;</div>
+                </li>
+                <li>
+                    <div class="code">const exampleB = new RegExp("&lt;div");</div>
+                </li>
+            </ul>
+            <p>Both expressions above select
+                <span class="code">"&lt;div"</span> when given the string
+                <span class="code">".jpg\"&gt; \n&lt;div style="</span>.<br><br>
+                Regular expressions can consist of strings, escape characters, and other regular expressions.<br>
+            </p>
+            <ul>
+                <li>
+                    <div class="code">const exampleA = new
+                        RegExp("&lt;img([^]+?(?=class))class=\"([^]+?(?=\"))");</div>
+                </li>
+            </ul>
+            <p>Let’s break them down:</p>
+
+            <ul>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/&lt;img / </span></div>string
+                    </div>
+                </li>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/([^]+?(?=class))/ </span></div>regular expression
+                    </div>
+                </li>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/class=/ </span></div>string
+                    </div>
+                </li>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/\"/ </span></div>escape character (allows the
+                        quote to be interpreted as a part, not the end, of the string)
+                    </div>
+                </li>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/([^]+?(?=\"))/ </span></div>regular expression
+                    </div>
+                </li>
+                <li>
+                    <div style="display: flex;">
+                        <div style="width: 200px;"><span class="code">/\"/ </span></div>escape character
+                    </div>
+                </li>
+            </ul>
+
+            <p>This regular expression matches strings that look something like
+                <span class="code">"&lt;img class=\"item-image\""</span>.
+                First string means the regular expression simply looks for the sequence of characters <span
+                    class="code">"&lt;img"</span>.
+                Then, the regular expression must match the weird-looking expression <span
+                    class="code">/([^]+?(?=class))/</span>,
+                and later this document will explain how this matches the space that comes after
+                <span class="code">/&lt;img/</span>.
+                The next string class= matches the exact string <span class="code">"class="</span>, and the last three expressions match a
+                string surrounded by quotes, such as <span class="code">"\"item-image\""</span>.<br><br>
+                Visit <a href="https://regexr.com/" target="_blank">https://regexr.com/</a> and play around with the tool to familiarize yourself with regular
+                expressions. Try using the string below.
+            </p>
+            <p style="font-size: 10px; line-height: 12px;">
+                &lt;td class="x_item-image" rowspan="2"
+                style="box-sizing: border-box;padding: 0px; vertical-align: top;width: 20%; text-align:
+                left;font-family: Helvetica, sans-serif; font-size: 14px; line-height: 19px; color: rgb(112,
+                112,
+                112);"&gt;
+                &lt;a
+                href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.urbanoutfitters.com_shop_style_58675885-3Futm-5Fsource-3Dtransact-26utm-5Fcampaign-3Dorder-5Fconfirmation-26utm-5Fmedium-3Demail-26utm-5Fcontent-3Dproduct-2Dimg&amp;d=DwMGaQ&amp;c=HUrdOLg_tCr0UMeDjWLBOM9lLDRpsndbROGxEKQRFzk&amp;r=xZQf9p8J6bpSA2B2caK5R4LtrzdWjmfhPMCM-_xqPVQ&amp;m=kVk7k2GwT7p7gRHCnDTXhdtF615TN4ayFdd9NrWT_8Y&amp;s=h5WXmpL24B3x6fcaxpQSoui-8dHtbJOOSo_eOpaik_U&amp;e="
+                style="box-sizing: border-box;font-family: Helvetica, sans-serif; font-size: 14px; line-height:
+                19px; color: rgb(112, 112, 112);font-family: inherit; font-size: inherit; text-decoration:
+                underline; color: inherit !important;"&gt;
+                &lt;img width="116" border="0" alt="adidas Silicon Badge Tee"
+                style="box-sizing: border-box;display: block; max-width: 100%; margin: auto; border: none;width:
+                100%; max-width: 100%; display: block; margin: 0px;"
+                src="https://images.urbanoutfitters.com/is/image/UrbanOutfitters/58675885_052_b"&gt;&lt;/a&gt;
+                &lt;/td&gt;
+                &lt;td class="x_item-details"
+                style="box-sizing: border-box;padding: 0px; vertical-align: top;width: 44%; height: 18px;
+                padding-left: 15px; padding-right: 15px;font-family: Helvetica, sans-serif; font-size: 14px;
+                line-height: 19px; color: rgb(112, 112, 112);padding-left: 20px; padding-right: 30px;"&gt;
+                &lt;table class="x_full-width"
+                style="box-sizing: border-box;margin: 0px auto; border-collapse: collapse !important;
+                border-spacing: 0px !important;width: 100%;"&gt;
+                &lt;tbody style="box-sizing: border-box;"&gt;
+                &lt;tr class="x_product-name-large" style="box-sizing: border-box;"&gt;
+                &lt;td class="x_item-detail-row x_product-name"
+                style="box-sizing: border-box;padding: 0px; vertical-align: top;padding-bottom: 8px;text-align:
+                left;padding-bottom: 8px; text-align: left;font-family: Helvetica, sans-serif; font-size: 14px;
+                line-height: 19px; color: rgb(112, 112, 112);color: rgb(34, 34, 34); padding-bottom: 15px;"&gt;
+                &lt;h4
+                style="box-sizing: border-box;font-family: Helvetica, sans-serif; font-size: 14px; line-height:
+                19px; color: rgb(112, 112, 112);margin: 0px; font-size: 14px; font-weight: normal; color:
+                rgb(34,
+                34, 34);"&gt;
+                adidas Silicon Badge Tee &lt;/h4&gt;
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <a id="second"><div class="title">How we use regular expressions</div></a>
+        <div class="section-body">
+            <p>
+                Sosh receives its users’ purchase confirmation emails in HTML format and stores the brand and the
+                purchased products in its backend storage. That information is used to send a notification to the user
+                asking for approval of posting.<br><br>
+
+                In the initial phases, some of the confirmation emails will have to be manually viewed and entered into
+                the database. However, a program that grabs that information programmatically is under development, and
+                regular expressions will be thoroughly used in this program.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <a id="third"><div class="title">Example with a purchase confirmation email</div></a>
+        <div class="section-body">
+            <ul>
+                <li><span class="code">
+                        const htmlStr = `<br>
+                        &emsp;&lt;a
+                        href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.urbanoutfitters.com_-3Futm-5Fsource-3Dtransact-26utm-5Fmedium-3Demail-26utm-5Fcampaign-3Dorder-5Fconfirmation-26utm-5Fcontent-3Dlogo-26utm-5Fterm-3D&amp;d=DwMGaQ&amp;c=HUrdOLg_tCr0UMeDjWLBOM9lLDRpsndbROGxEKQRFzk&amp;r=xZQf9p8J6bpSA2B2caK5R4LtrzdWjmfhPMCM-_xqPVQ&amp;m=kVk7k2GwT7p7gRHCnDTXhdtF615TN4ayFdd9NrWT_8Y&amp;s=E11ZWSdGQf9p8qisDw_utAAsCLazWsu6mj8-KBpiBOw&amp;e="<br>
+                        &emsp;style="box-sizing: border-box;font-family: Helvetica, sans-serif; font-size: 14px;
+                        line-height:
+                        19px; color: rgb(112, 112, 112);font-family: inherit; font-size: inherit; text-decoration:
+                        underline; color: inherit !important;"&gt;<br>
+                        &emsp;&emsp;&lt;img\n class="x_header-logo-img" width="183" alt="Urban Outfitters" \n
+                        style="box-sizing: border-box;display: block; max-width: 100%; margin: auto; border:
+                        none;display:
+                        inline; margin: auto; width: 183px;"
+                        src="http://i.t.e.urbanoutfitters.com/wpm/610/UO/UO_email_header_160217.gif"&gt;<br>
+                        &emsp;&lt;/a&gt;`;
+                    </span></li>
+                <li><span class="code">
+                        const brandImageRE = new
+                        RegExp("&lt;img([^]+?(?=class))class=\"x_header-logo-img\"([^]+?(?=src=\"))src=\"([^\"]*)\"");
+                    </span></li>
+                <li><span class="code">
+                        console.log(htmlStr.match(brandImageRE));
+                    </span></li>
+            </ul>
+            <p>The console log returns the following array:</p>
+            <ol start="0">
+                <li>
+                    <span class="code">
+                        [ "&lt;img\n class=\"x_header-logo-img\" width=\"183\" alt=\"Urban
+                        Outfitters\"\n style=\"box-sizing: border-box;display: block; max-width: 100%;
+                        margin: auto; border: none;display: inline; margin: auto; width:
+                        183px;\"\nsrc=\"http://i.t.e.urbanoutfitters.com/wpm/610/UO/UO_email_header_160217.gif\"",
+                    </span>
+                </li>
+                <li>
+                    <span class="code">
+                        "\n ",
+                    </span>
+                </li>
+                <li>
+                    <span class="code">
+                        " width=\" 183\" alt=\"Urban Outfitters\"\n style=\"box-sizing:
+                        border-box;display: block; max-width: 100%; margin: auto; border: none;display:
+                        inline; margin: auto; width:
+                        183px;\"\n",
+                    </span>
+                </li>
+                <li>
+                    <span class="code">
+                        "http://i.t.e.urbanoutfitters.com/wpm/610/UO/UO_email_header_160217.gif" ]
+                    </span>
+                </li>
+            </ol>
+            <p>The match function returns an array, and it holds at index 0 the string matching the whole regular
+                expression.<br><br>
+                The items from index 1 are the strings matching the regular expressions inside parentheses. Notice there
+                are three such items: </p>
+            <ol>
+                <li>
+                    <span class="code">"\n "</span>,
+                </li>
+                <li>
+                    <span class="code">" width=\" 183\" alt=\"Urban Outfitters\"\n style=\"box-sizing:
+                        border-box;display: block; max-width: 100%; margin: auto; border: none;display:
+                        inline; margin: auto; width: 183px;\"\n"</span>,
+                </li>
+                <li>
+                    and <span
+                        class="code">"http://i.t.e.urbanoutfitters.com/wpm/610/UO/UO_email_header_160217.gif"</span>,
+                </li>
+            </ol>
+            <p>
+                And there are three such regular expressions in parentheses:
+            </p>
+            <ol>
+                <li>
+                    <span class="code">/([^]+?(?=class))/</span>,
+                </li>
+                <li>
+                    <span class="code">/([^]+?(?=src=\"))/</span>,
+                </li>
+                <li>
+                    and <span class="code">/([^\"]*)/</span>.
+                </li>
+            </ol>
+            <p>Let’s look into why these are equivalent.</p>
+            <ul>
+                <li>
+                    <span class="code">/([^]+?(?=class))/ => "\n "</span>
+                    <ul>
+                        <li>
+                            <span class="code">/[^]/</span> matches anything.
+                        </li>
+                        <li>
+                            <span class="code">/expr+/</span> matches one or more of expr.
+                        </li>
+                        <li>
+                            <span class="code">/(expr1?(?=expr2))/</span> matches /expr1/ until <span
+                                class="code">/expr2/</span> is found.
+                        </li>
+                        <li>
+                            All together, the regex matches at least one character until the string <span
+                                class="code">"class"</span> is found.
+                        </li>
+                        <li>
+                            Since this expression comes after matching <span class="code">"&lt;img"</span>, it matches
+                            <span class="code">"\n "</span> immediately following
+                            the string and comes to a halt before <span class="code">"class"</span>.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="code">/([^]+?(?=src=\"))/ => "width=\"183\" alt=\"Urban Outfitters\"\n
+                        style=\"box-sizing:
+                        border-box;display: block; max-width: 100%; margin: auto; border: none;display: inline; margin:
+                        auto; width: 183px;\"\n"</span>
+                    <ul>
+                        <li>
+                            <span class="code">/\"/</span> mathes a double quote.
+                        </li>
+                        <li>
+                            All together, the regex matches at least one character until the string <span
+                                class="code">"src=\""</span> is found.
+                        </li>
+                        <li>
+                            Since this expression comes after matching <span
+                                class="code">"\"x_header-logo-img\""</span>, all the characters
+                            immediately following that string are selected until <span class="code">"src=\""</span>.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="code">/([^\"]*)/ =>
+                        "http://i.t.e.urbanoutfitters.com/wpm/610/UO/UO_email_header_160217.gif"</span>
+                    <ul>
+                        <li>
+                            <span class="code">/[^expr]/</span> matches a single character that is not <span
+                                class="code">/expr/</span>.
+                        </li>
+                        <li>
+                            expr* matches zero or more characters that match <span class="code">/expr/</span>.
+                        </li>
+                        <li>
+                            All together, the regex matches zero or more consecutive characters that are not <span
+                                class="code">/\"/</span>.
+                        </li>
+                        <li>
+                            Since the regex comes after <span class="code">"src=\""</span> and stops consuming
+                            characters when the closing double
+                            quote is found, it matches the full url inside the quotes.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <a id="fourth"><div class="title">Get started</div></a>
+        <div class="section-body">
+            <p>
+                Let’s begin! If you’re reading this, you have already downloaded the folder containing this file and an
+                .html file. There’s a variety of options for code editors, but we will be using Visual Studio Code.
+                Download VS Code: https://code.visualstudio.com/download.<br><br>
+                Open VS Code and open the file brandFunctions.html. This file has snippets of code that are used in the
+                program under development. There are also many aspects of it that are made specifically for this
+                introduction to regular expressions as used for Sosh. For example, although we don’t often directly
+                write HTML files for Sosh, the file you will be working from today is an HTML file, as the focus is on
+                the included JavaScript functions.<br><br>
+                There are many lines of code in the file that are unnecessary for us to study, as they are for building
+                and styling the HTML view. VS Code lets you collapse such lines.<br><br>
+                You will be only changing code inside the first script tag. It contains one variable, brandFunctions,
+                that holds an object literal: a JavaScript data type made of key-value pairs. In brandFunctions, the
+                keys are the function names, and the values are the functions themselves.<br><br>
+                The function UrbanOutfitters has already been written, and it takes an HTML string and returns an object
+                literal in the following form:<br><br>
+                <span class="code">
+                    { brandImage: “url-to-brand-logo-image”,<br>
+                    &emsp;&emsp;items: [{ itemName: “first item name”,<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;itemLink: “url-to-product”,<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;itemImage: “url-to-product-image”, },<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{ itemName: “second item name”,<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;itemLink: “url-to-product”,<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;itemImage: “url-to-product-image”, },<br>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ...] }
+                </span><br><br>
+                You can view the actual output of the function from the console of the HTML page opened from a web
+                browser. To open the console, right-click on the page and select inspect; when the panel shows up,
+                switch to the console tab, and finally, you will be able to see the values printed.<br><br>
+
+                The function asos is incomplete; it has the same structure as UrbanOutfitters, but it is your task to
+                write the correct regular expressions for confirmation emails from ASOS. Have fun coding!
+            </p>
+        </div>
+    </div>
+
+    <script>
+
+        function codify(substr) {
+
+            // variables
+            for (const sub_match of substr.matchAll(/(let|var)\s([a-zA-Z_]+)/g)) {
+                substr = substr.replace(sub_match[2], "<span style='color:#0085de'>" + sub_match[2] + "</span>");
+            }
+            for (const sub_match of substr.matchAll(/console/g)) {
+                substr = substr.replace(sub_match[0], "<span style='color:#0085de'>" + sub_match[0] + "</span>");
+            }
+
+            // constants
+            for (const sub_match of substr.matchAll(/const\s([a-zA-Z_]+)/g)) {
+                substr = substr.replace(sub_match[1], "<span style='color:#034aff'>" + sub_match[1] + "</span>");
+            }
+            for (const sub_match of substr.matchAll(/(htmlStr|brandImageRE)/g)) {
+                substr = substr.replace(sub_match[1], "<span style='color:#034aff'>" + sub_match[1] + "</span>");
+            }
+
+            // keywords
+            for (const sub_match of substr.matchAll(/const|let|var|new|=&gt;/g)) {
+                substr = substr.replace(sub_match[0], "<span style='color:#0036b4'>" + sub_match[0] + "</span>");
+            }
+
+            // functions
+            for (const sub_match of substr.matchAll(/.([\w_]+)\(/g)) {
+                substr = substr.replace(sub_match[1], "<span style='color:#dba100'>" + sub_match[1] + "</span>");
+            }
+
+            // regexp object
+            for (const sub_match of substr.matchAll(/RegExp/g)) {
+                substr = substr.replace(sub_match[0], "<span style='color:#00ba8c'>" + sub_match[0] + "</span>");
+            }
+            return substr;
+        }
+
+        function checkRegex(substr) {
+            let sofar = "";
+            let remaining = substr;
+            let match = remaining.match(/(^|[\s(])(\/[^\/]+\/)($|[\s);])/);
+            while (remaining !== "" || match) {
+
+                if (!match) {
+                    sofar += codify(remaining);
+                    remaining = "";
+                }
+                else {
+                    sofar += codify(remaining.slice(0, match.index));
+                    sofar += "<span style=\'color:red\'>" + match[2] + "</span>";
+                    remaining = remaining.slice(match[0].indexOf(match[2]) + match.index + match[2].length);
+                    match = remaining.match(/[\s(](\/[^\/]+\/)[\s;)]/);
+                }
+            }
+
+            return sofar;
+        }
+
+        const elems = document.getElementsByClassName("code");
+
+        for (const elem of elems) {
+
+            let sofar = "";
+            let remaining = elem.innerHTML;
+            let match = remaining.match(/([^]*?(?=((?<![\\])[`'"])))(((?<![\\])\2)([^]+?((?<![\\])(?=\2)))\2)/);
+
+            while (remaining !== "" || match) {
+
+                let quote = "";
+
+                if (!match) {
+                    sofar += checkRegex(remaining);
+                    remaining = "";
+                }
+
+                else {
+                    sofar += checkRegex(match[1]);
+                    sofar += "<span style='color:#b56a00'>" + match[3] + "</span>";
+                    remaining = remaining.slice(match[1].indexOf(match[3]) + match.index + match[0].length + 1);
+                    match = remaining.match(/((?<![\\])[`'"])([^]+?((?<![\\])(?=\1)))\1/);
+                }
+            }
+            elem.innerHTML = sofar;
+        }
+    </script>
+
+</body>
+
+</html>
